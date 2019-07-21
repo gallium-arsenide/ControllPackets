@@ -21,23 +21,13 @@ int main()
 	UpdatePacket update;
 	ConfigPacket config;
 
-	while (!incoming_messages.empty())
-	{
-		switch (PacketParser::getPacketType(incoming_messages.front()))
-		{
-			case PacketType::cofig:
-				config = PacketParser::parseAsCofig(incoming_messages.front());
-				controller.applyPacket(config);
-				break;
-			case PacketType::update:
-				update = PacketParser::parseAsUpdate(incoming_messages.front());
-				controller.applyPacket(update);
-				break;
-			default:
-				std::cout << "unknown packet type\n";
-				return 1;
-		}
-		controller.draw();
-		incoming_messages.pop_front();
-	}
+    PacketParser parser;
+
+    while (!incoming_messages.empty())
+    {
+        auto packet = parser.parse(incoming_messages.front());
+        packet->applyTo(controller);
+        controller.draw();
+        incoming_messages.pop_front();
+    }
 }

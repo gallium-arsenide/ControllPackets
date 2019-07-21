@@ -1,24 +1,22 @@
 #pragma once
 
-#include "updatePacket.hpp"
-#include "configPacket.hpp"
-
-#include <vector>
-
-using RawPacket = std::vector<byte>;
-
-enum class PacketType
-{
-	cofig,
-	update
-};
+#include <memory>
+#include <map>
+#include "applyable.hpp"
+#include "parser.hpp"
 
 class PacketParser
 {
 public:
-	static PacketType getPacketType(const RawPacket &packet);
+    PacketParser();
+    std::unique_ptr<Applyable> parse(const RawPacket &packet);
 
-	static UpdatePacket parseAsUpdate(const RawPacket &packet);
+private:
+    std::map<PacketType, std::unique_ptr<Parser>> parsers;
 
-	static ConfigPacket parseAsCofig(const RawPacket &packet);
+    PacketType getPacketType(const RawPacket &packet);
+
+//	static UpdatePacket parseAsUpdate(const RawPacket &packet);
+
+//	static ConfigPacket parseAsCofig(const RawPacket &packet);
 };
